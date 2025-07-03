@@ -135,7 +135,7 @@ def add(request):
             name=form.cleaned_data['name'].strip()
             categories_obj = List_of_categories.objects.get(user=request.user)
             l = categories_obj.categories
-            if name and name not in categories_obj.categories:
+            if name not in categories_obj.categories:
                 l.append(name)
                 categories_obj.categories=l
                 categories_obj.save()
@@ -143,7 +143,8 @@ def add(request):
                 folder_id = utils.return_folder_id(service)
                 folders = utils.folder_check_create(service,folder_id,categories_obj.categories)
             else:
-                form.add_error('name', 'This category name is invalid.')
+                form.add_error('name', 'This category name already exists')
+                return render(request, 'add.html', {'form': form})
             return redirect('edit')  
     else:
         form = CategoryForm()
@@ -161,6 +162,7 @@ def rename(request,category_id):
             name=form.cleaned_data['name'].strip()
             if name in (l[:int(category_id)] + l[int(category_id+1):]):
                 form.add_error('name', 'This category name already exists.')
+                return render(request, 'rename.html', {'form': form})
             else:
                 folder = utils.return_folder_id(service,folder_id,[l[int(category_id)]])
                 l[int(category_id)] = name
