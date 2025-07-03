@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <ul>
+        {% for category in list %}
+            <li>{{ category }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'edit' %}">Edit Categories</a>
+</body>
+</html> 

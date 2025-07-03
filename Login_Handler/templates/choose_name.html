@@ -1,0 +1,34 @@
+{%load static%}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Login Page</title>
+  <script src="https://accounts.google.com/gsi/client" async></script>
+  <link rel="stylesheet" href="{% static 'css/choose_name.css' %}">
+</head>
+
+<body>
+  <div class="container">
+    <img src="{% static 'images/possible_logo.png' %}">
+    <h2>Choose a Username</h2>
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div style="margin: 10px 0">
+        {{ form.username.label_tag }}<br>
+        {{ form.username }}<br>
+        {% for error in form.username.errors %}
+        <p style="color:red">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <button type="submit" style="margin: 5px 0" onclick="alert('We require access to the data in your drive')">Continue</button>
+    </form>
+  </div>
+</body>
+
+</html>

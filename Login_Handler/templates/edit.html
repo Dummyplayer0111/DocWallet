@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+
+<body>
+    <ul>
+        {% for category_id, category_name in categories.items %}
+        <li>
+            <a href="{% url 'edit' category_id=category_id %}">
+                Delete {{ category_name }}
+            </a>
+            <a href="{% url 'rename' category_id=category_id %}">
+                Rename {{ category_name }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'add' %}">Add Category</a>
+</body>
+
+</html>

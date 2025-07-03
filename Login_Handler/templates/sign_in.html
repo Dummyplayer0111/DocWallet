@@ -1,0 +1,25 @@
+{%load static%}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Login Page</title>
+  <script src="https://accounts.google.com/gsi/client" async></script>
+  <link rel="stylesheet" href="{% static 'css/sign_in.css' %}">
+</head>
+
+<body>
+  <div class="container">
+    <img class="img-1" src="{% static 'images/possible_logo.png' %}" alt="Logo">
+    <p>Please sign in with Google to continue:</p>
+
+    <a href="{% url 'oauth2_start' %}">
+      <button>
+        Sign In with Google
+      </button>
+    </a>
+  </div>
+</body>
+
+</html>
