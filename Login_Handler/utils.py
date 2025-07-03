@@ -105,6 +105,7 @@ def create_flow_object(state_f=None):
             "https://www.googleapis.com/auth/userinfo.email",
             "https://www.googleapis.com/auth/drive.file",
             "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/drive",
         ],
         state=state_f 
         )
@@ -128,6 +129,7 @@ def create_flow_object(state_f=None):
             "https://www.googleapis.com/auth/userinfo.email",
             "https://www.googleapis.com/auth/drive.file",
             "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/drive",
         ],
         )
         return flow_f
