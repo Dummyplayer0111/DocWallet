@@ -1,3 +1,4 @@
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +7,10 @@
     <title>Home</title>
 </head>
 <body>
-    <ul>
-        {% for category in list %}
-            <li>{{ category }}</li>
-        {% endfor %}
-    </ul>
+    {% for category in UUID_DICT %}
+            {%  dict_get category as uuid %}
+                <a href="{% url 'view_category' UUID=uuid %}">{{ category }}</a>
+    {% endfor %}
     <a href="{% url 'edit' %}">Edit Categories</a>
 </body>
-</html> 
+</html>

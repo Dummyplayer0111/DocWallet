@@ -1,4 +1,4 @@
-import os,pytz,uuid,io
+import os,pytz,uuid,io,datetime
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.http import HttpResponse
@@ -15,9 +15,7 @@ from googleapiclient.discovery import build
 from Login_Handler.models import GoogleCredentials,List_of_categories,User_Profile
 from django.utils.timezone import make_aware, is_naive
 from django.utils import timezone
-from datetime import datetime
 from google.auth.transport.requests import Request
-from . import utils
 from googleapiclient.http import MediaIoBaseUpload
 
 def creds_object(request,hit_db = False):
@@ -57,9 +55,7 @@ def creds_object(request,hit_db = False):
         scopes=creds_data_f['scopes'].split() if isinstance(creds_data_f['scopes'], str) else creds_data_f['scopes']
         )
         return creds_f,creds_data_f
-    
-
-    
+        
 def update_db_on_credentials(request, creds_f,refresh_token=None):
 
     if refresh_token:
@@ -144,7 +140,6 @@ def session_update(request,credentials):
     'scopes': credentials.scopes,
     'expiry': credentials.expiry.isoformat() if credentials.expiry else None,
     }
-
     return credentials
 
 def folder_check_create(service,parent_id=None,target_names=['DocWallet']):
@@ -192,6 +187,7 @@ def create_service(request):
     return creds,creds_data,service
 
 def return_folder_id(service, parent_id=None, target_names=['DocWallet']):
+    print("IN FUNC",target_names)
     if parent_id:
         query = (
             f"'{parent_id}' in parents and "
@@ -239,3 +235,44 @@ def upload_image_to_drive(service,file_obj,filename,mimetype='image/jpeg',folder
 
     uploaded = service.files().create(body=file_metadata,media_body=media,fields='id, name').execute()
     return uploaded
+
+def upload_image_and_session_update(request,id,image,UUID):
+    creds, creds_data, service = create_service(request)
+    upload_image_to_drive(service,image.file,image.name,image.content_type,id)
+    categories_obj = List_of_categories.objects.get(user=request.user)
+    print("check-1",dict(request.session))
+    UUID_DICT=request.session.get('uuids')
+    new_name = UUID_DICT[str(UUID)]
+    UUID_DICT = uuid_to_list(request,categories_obj.categories)
+    request.session['uuids'] = UUID_DICT
+    UUID_DICT = reverse_dict(UUID_DICT)
+    request.session['UUIDS'] = UUID_DICT
+    return UUID_DICT.get(new_name)
+
+def create_date_folder(request,UUID):
+    user_profile = User_Profile.objects.get(user=request.user)
+    aware_now = datetime.datetime.now(pytz.timezone(user_profile.timezone))
+    today = aware_now.date()
+    today_str = str(today)
+    uuids = request.session.get('uuids',{})
+    cat = uuids.get(UUID,None)
+    print("OUT",cat)
+    creds, creds_data, service = create_service(request)
+    folder_id = folder_check_create(service)
+    cat_id = return_folder_id(service,folder_id,[cat])
+    today_folder_id = folder_check_create(service,cat_id,[today_str])
+    return today_folder_id.get(today_str)
+
+
+
+def list_folder(request,parent_id):
+    creds, creds_data, service = create_service(request)
+    response = service.files().list(
+        q=f"'{parent_id}' in parents and mimeType='application/vnd.google-apps.folder' and trashed = false",
+        spaces='drive',
+        fields='files(id, name)',
+    ).execute()
+
+    folders = response.get('files', [])
+    return [folder['name'] for folder in folders]
+

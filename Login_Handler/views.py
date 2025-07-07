@@ -1,4 +1,4 @@
-import os
+import os,pytz,uuid
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.http import HttpResponse
@@ -12,14 +12,12 @@ from django.contrib.auth.decorators import login_required
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from Login_Handler.models import GoogleCredentials,List_of_categories
+from Login_Handler.models import GoogleCredentials,List_of_categories,User_Profile
 from django.utils.timezone import make_aware, is_naive
 from django.utils import timezone
 from datetime import datetime
 from google.auth.transport.requests import Request
 from . import utils
-
-
 
 @csrf_exempt
 def auth_receiver(request):
@@ -69,7 +67,6 @@ def oauth2_start(request):
     request.session['state'] = state  
     return redirect(authorization_url)
     
-
 def choose_name(request):
     lmail = request.session.get('gmail')
     if not lmail:
@@ -84,6 +81,8 @@ def choose_name(request):
             )
             new_user.set_unusable_password()
             new_user.save()
+
+            User_Profile.objects.create(user = new_user,timezone=form.cleaned_data['timezone'])
 
             creds, creds_data = utils.creds_object(request)
             if not creds:
@@ -101,7 +100,6 @@ def choose_name(request):
         form = CustomUserCreationForm(initial={'username': username_guess})
     return render(request, 'choose_name.html', {'form': form})
 
-
 @login_required
 def home(request):
     creds, creds_data, service = utils.create_service(request)
@@ -110,21 +108,29 @@ def home(request):
     folder_id = utils.folder_check_create(service)
     categories_obj, created = List_of_categories.objects.get_or_create(user=request.user,defaults={'categories': ['Food', 'Games', 'Cinema', 'Petrol']})
     folders = utils.folder_check_create(service,folder_id,categories_obj.categories)
-    return render(request, 'home.html', {'list': categories_obj.categories})
+    UUID_DICT = utils.uuid_to_list(request,categories_obj.categories)
+    request.session['uuids'] = UUID_DICT
+    UUID_DICT = utils.reverse_dict(UUID_DICT)
+    request.session['UUIDS'] = UUID_DICT
+    print(dict(request.session))
+    return render(request, 'home.html', {'UUID_DICT':UUID_DICT})
 
 def edit(request,category_id=None):
     categories_obj = List_of_categories.objects.get(user=request.user)
     if category_id is not None:
-        creds, creds_data, service = utils.create_service(request)
-        l = categories_obj.categories
-        folder_id = utils.return_folder_id(service)
-        folder = utils.return_folder_id(service,folder_id,[l[int(category_id)]])
-        service.files().delete(fileId=folder).execute()
-        l.pop(int(category_id))
-        categories_obj.categories = l
-        categories_obj.save()
-        folders = utils.folder_check_create(service,folder_id,categories_obj.categories)
-        return render(request, 'edit.html', {'categories':{i: value for i, value in enumerate(categories_obj.categories)}})
+        try:
+            creds, creds_data, service = utils.create_service(request)
+            l = categories_obj.categories
+            folder_id = utils.return_folder_id(service)
+            folder = utils.return_folder_id(service,folder_id,[l[int(category_id)]])
+            service.files().delete(fileId=folder).execute()
+            l.pop(int(category_id))
+            categories_obj.categories = l
+            categories_obj.save()
+            folders = utils.folder_check_create(service,folder_id,categories_obj.categories)
+            return render(request, 'edit.html', {'categories':{i: value for i, value in enumerate(categories_obj.categories)}})
+        except:
+            return render(request, 'edit.html', {'categories':{i: value for i, value in enumerate(categories_obj.categories)}})
     else:
         return render(request, 'edit.html', {'categories':{i: value for i, value in enumerate(categories_obj.categories)}})
 

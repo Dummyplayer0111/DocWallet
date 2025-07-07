@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*',]
 
 INSTALLED_APPS = [
     'Login_Handler',
+    'Category_Handler',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -108,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
