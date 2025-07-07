@@ -11,7 +11,7 @@ load_dotenv(dotenv_path=BASE_DIR / 'DocWallet' / '.env')
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--fmsx4$nuolh%ph852x$2(aqp&xhmnuaw%ddd0ghls6b3ah!oi'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
