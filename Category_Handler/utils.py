@@ -187,7 +187,6 @@ def create_service(request):
     return creds,creds_data,service
 
 def return_folder_id(service, parent_id=None, target_names=['DocWallet']):
-    print("IN FUNC",target_names)
     if parent_id:
         query = (
             f"'{parent_id}' in parents and "
@@ -236,43 +235,23 @@ def upload_image_to_drive(service,file_obj,filename,mimetype='image/jpeg',folder
     uploaded = service.files().create(body=file_metadata,media_body=media,fields='id, name').execute()
     return uploaded
 
-def upload_image_and_session_update(request,id,image,UUID):
-    creds, creds_data, service = create_service(request)
-    upload_image_to_drive(service,image.file,image.name,image.content_type,id)
-    categories_obj = List_of_categories.objects.get(user=request.user)
-    print("check-1",dict(request.session))
-    UUID_DICT=request.session.get('uuids')
-    new_name = UUID_DICT[str(UUID)]
-    UUID_DICT = uuid_to_list(request,categories_obj.categories)
-    request.session['uuids'] = UUID_DICT
-    UUID_DICT = reverse_dict(UUID_DICT)
-    request.session['UUIDS'] = UUID_DICT
-    return UUID_DICT.get(new_name)
 
-def create_date_folder(request,UUID):
+def image_name(request,UUID,value):
+    names = request.session.get('uuids')
+    cat_name = names.get(UUID)
     user_profile = User_Profile.objects.get(user=request.user)
-    aware_now = datetime.datetime.now(pytz.timezone(user_profile.timezone))
-    today = aware_now.date()
-    today_str = str(today)
-    uuids = request.session.get('uuids',{})
-    cat = uuids.get(UUID,None)
-    print("OUT",cat)
-    creds, creds_data, service = create_service(request)
-    folder_id = folder_check_create(service)
-    cat_id = return_folder_id(service,folder_id,[cat])
-    today_folder_id = folder_check_create(service,cat_id,[today_str])
-    return today_folder_id.get(today_str)
+    user_tz = pytz.timezone(user_profile.timezone)
+    timezone.activate(user_tz)
+    now = timezone.localtime()
+    time_name = str(now)[:16]
+    time_name = time_name.replace(" ",'_')
+    value_name = "{:012.2f}".format(value)
+    return cat_name + "_" + time_name + "_" + value_name
+
+    
 
 
-
-def list_folder(request,parent_id):
-    creds, creds_data, service = create_service(request)
-    response = service.files().list(
-        q=f"'{parent_id}' in parents and mimeType='application/vnd.google-apps.folder' and trashed = false",
-        spaces='drive',
-        fields='files(id, name)',
-    ).execute()
-
-    folders = response.get('files', [])
-    return [folder['name'] for folder in folders]
-
+def return_cat_name(request,UUID):
+    names = request.session.get('uuids')
+    cat_name = names.get(UUID)
+    return cat_name

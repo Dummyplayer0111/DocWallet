@@ -14,5 +14,4 @@ class CategoryForm(forms.Form):
 
 class ImageUploadForm(forms.Form):
     image = forms.ImageField()
-    name = forms.CharField(label='Bill_particulars', min_length=5, max_length=30)
     value = forms.DecimalField(max_digits=10, decimal_places=2)

@@ -27,16 +27,13 @@ def add(request,UUID):
         form = ImageUploadForm(request.POST,request.FILES)
         if form.is_valid():
             image = form.cleaned_data['image']
-            name = form.cleaned_data['name']
-            id = utils.create_date_folder(request,UUID)
-            print(id)
-            print(dict(request.session))
-            new_uuid = utils.upload_image_and_session_update(request,id,image,UUID)
-            print(dict(request.session))
-            return render(request, 'bills_page.html', {'uuid':new_uuid})
+            value = form.cleaned_data['value']
+            creds,creds_data,service = utils.create_service(request)
+            folder_id = utils.return_folder_id(service)
+            cat_id = utils.return_folder_id(service,folder_id,[utils.return_cat_name(request,UUID)])
+            formatted_name = utils.image_name(request,UUID,value)
+            utils.upload_image_to_drive(service,image,formatted_name,image.content_type,cat_id)
+            return render(request, 'bills_page.html',{'uuid':UUID})
     else:
-        print(dict(request.session))
-        utils.create_date_folder(request,UUID)
-        print(dict(request.session))
         form = ImageUploadForm()
     return render(request, 'new_bill.html', {'form':form})
