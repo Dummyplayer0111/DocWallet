@@ -13,10 +13,11 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from Login_Handler.models import GoogleCredentials,List_of_categories,User_Profile
-from django.utils.timezone import make_aware, is_naive
 from django.utils import timezone
 from google.auth.transport.requests import Request
 from googleapiclient.http import MediaIoBaseUpload
+from django.utils.timezone import make_aware, is_naive
+from decimal import Decimal
 
 def creds_object(request,hit_db = False):
     if hit_db:
@@ -210,7 +211,6 @@ def rename_folder(service, folder_id, new_name):
     print(f"Renamed folder to: {updated_folder['name']} (ID: {updated_folder['id']})")
     return updated_folder['id']
 
-
 def uuid_to_list(request,items):
     #uuid_dict = {str(uuid.uuid4()): item for item in items}
     uuid_dict={}
@@ -225,7 +225,6 @@ def uuid_to_list(request,items):
 def reverse_dict(d):
     return {v: k for k, v in d.items()}
 
-
 def upload_image_to_drive(service,file_obj,filename,mimetype='image/jpeg',folder_id=None):
     file_metadata = {'name':filename}
     if folder_id:
@@ -233,8 +232,8 @@ def upload_image_to_drive(service,file_obj,filename,mimetype='image/jpeg',folder
     media = MediaIoBaseUpload(file_obj, mimetype=mimetype)
 
     uploaded = service.files().create(body=file_metadata,media_body=media,fields='id, name').execute()
+    service.permissions().create(fileId=uploaded['id'],body={"role": "reader", "type": "anyone"},).execute()
     return uploaded
-
 
 def image_name(request,UUID,value):
     names = request.session.get('uuids')
@@ -243,15 +242,140 @@ def image_name(request,UUID,value):
     user_tz = pytz.timezone(user_profile.timezone)
     timezone.activate(user_tz)
     now = timezone.localtime()
-    time_name = str(now)[:16]
+    time_name = str(now)[:19]
     time_name = time_name.replace(" ",'_')
     value_name = "{:012.2f}".format(value)
     return cat_name + "_" + time_name + "_" + value_name
-
-    
-
 
 def return_cat_name(request,UUID):
     names = request.session.get('uuids')
     cat_name = names.get(UUID)
     return cat_name
+
+def get_image_file_names_in_folder(service, folder_id):
+    query = (
+        f"'{folder_id}' in parents and "
+        "mimeType contains 'image/' and trashed = false"
+    )
+    image_names = []
+    page_token = None
+
+    while True:
+        response = service.files().list(
+            q=query,
+            spaces='drive',
+            fields='nextPageToken, files(name, mimeType)',
+            pageToken=page_token
+        ).execute()
+
+        for file in response.get('files', []):
+            image_names.append(file['name'])
+
+        page_token = response.get('nextPageToken')
+        if not page_token:
+            break
+
+    return image_names
+
+def randomizer(request):
+    categories_obj = List_of_categories.objects.get(user = request.user)
+    UUID_DICT = uuid_to_list(request,categories_obj.categories)
+    request.session['uuids'] = UUID_DICT
+    UUID_DICT = reverse_dict(UUID_DICT)
+    request.session['UUIDS'] = UUID_DICT
+
+def list_of_bills(request,UUIDS,start_date=None,end_date=None):
+    creds,creds_data,service = create_service(request)
+    folder_id = return_folder_id(service)
+    l,l1=[],[]
+    for UUID in UUIDS:
+        cat_id = return_folder_id(service,folder_id,[return_cat_name(request,UUID)])
+        l = l + get_image_file_names_in_folder(service,cat_id)
+
+    if start_date is None:
+        return l
+
+    elif start_date:
+        user_profile = User_Profile.objects.get(user=request.user)
+        user_tz = pytz.timezone(user_profile.timezone)
+        timezone.activate(user_tz)
+        for x in l:
+            props = x.split('_')
+            date_str = props[1]
+            date_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+            if date_obj >= start_date and date_obj <= end_date:
+                l1.append(x)
+        return l1
+
+def names_to_uuid(request,categories):
+    l=[]
+    names = request.session.get('UUIDS')
+    for i in categories:
+        l.append(names.get(i))
+    return l
+
+def table_data(request):
+    l = request.session.get('Final_bills')
+    l1 = []
+    s = Decimal('0')
+    for x in l:
+        l2 = x.split('_')
+        l2[3] = str(float(l2[3]))
+        temp = Decimal(l2[3])
+        s = s+temp
+        l3=[]
+        l3.append(l2[1])
+        l3.append(l2[2])
+        l3.append(l2[0])
+        l3.append(l2[3])
+        l1.append(l3)
+    l1.append(["","","TOTAL:",f"{s:.2f}"])
+    return l1
+
+def get_image_link(service, file_name):
+    # Search for image file by name
+    query = f"name = '{file_name}' and mimeType contains 'image/' and trashed = false"
+    results = service.files().list(
+        q=query,
+        spaces='drive',
+        fields="files(id, name, mimeType)",
+        pageSize=1
+    ).execute()
+
+    items = results.get('files', [])
+    if not items:
+        return None
+
+    file_id = items[0]['id']
+    
+    # Construct the sharable link (assumes file is shared)
+    image_link = f"https://drive.google.com/uc?id={file_id}"
+    return image_link
+
+def get_image_id(service,name):
+    query = (
+        f"name = '{name}' and "
+        "mimeType contains 'image/' and "
+        "trashed = false"
+    )
+    response = service.files().list(
+        q=query,
+        spaces='drive',
+        fields='files(id, name, mimeType)',
+        pageSize=1
+    ).execute()
+
+    files = response.get('files', [])
+    if not files:
+        return None
+
+    return files[0]['id']
+
+def delete_file(service, file_id):
+    try:
+        service.files().delete(fileId=file_id).execute()
+        print(f"Deleted file with ID: {file_id}")
+        return True
+    except Exception as e:
+        print(f"Failed to delete file: {file_id} — {e}")
+        return False

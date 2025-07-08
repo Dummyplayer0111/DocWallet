@@ -1,0 +1,20 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Edit Bill</title>
+</head>
+
+<body>
+  <h2>Edit Bill</h2>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Edit</button>
+  </form>
+  {% clean_edit_link name %}
+
+</body>
+
+</html>

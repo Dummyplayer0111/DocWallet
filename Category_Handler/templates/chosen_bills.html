@@ -10,7 +10,8 @@
     {% for name in list %}
         <div>{% detail_link name %}</div>
     {% endfor %}   
-    <a href="{% url 'new_bill' UUID=uuid %}">Add new bill</a>
-    <a href="{% url 'cat_timeframe' UUID=uuid %}">Export</a>
+    <a href="{% url 'download' rows=length %}">
+        Download pdf
+    </a>
 </body>
 </html>

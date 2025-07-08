@@ -1,0 +1,21 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Bill Information</h2>
+
+    <p><strong>Value:</strong> {{ value }}</p>
+
+<div><iframe src="https://drive.google.com/file/d/{{id}}/preview" width="600" height="400" allow="autoplay"></iframe>
+</div>
+{% edit_link name %}
+</body>
+
+</html>

@@ -112,7 +112,6 @@ def home(request):
     request.session['uuids'] = UUID_DICT
     UUID_DICT = utils.reverse_dict(UUID_DICT)
     request.session['UUIDS'] = UUID_DICT
-    print(dict(request.session))
     return render(request, 'home.html', {'UUID_DICT':UUID_DICT})
 
 def edit(request,category_id=None):
