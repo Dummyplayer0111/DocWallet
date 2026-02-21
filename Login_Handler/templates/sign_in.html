@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html style="width: 98%; height: 98%;">
+
+<head>
+    <style>
+        body {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+        }
+
+        #bg-i {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        #sign-in-button a {
+            display: inline-block;
+            margin: 3px;
+            border-radius: 30px;
+            border: solid 3px grey;
+            padding: 15px 25px;
+            font-size: 30px;
+            background-color: rgb(60, 111, 241);
+            color: white;
+            text-decoration: none;
+        }
+
+        #sign-in-button a:hover {
+            cursor: pointer;
+            padding: 16px 26px;
+        }
+
+        #sign-in-button a:active {
+            background-color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="{% static 'images/pic.jpeg' %}" alt="BG here" id="bg-i">
+
+    <form id="sign-in-button">
+        <a href="{% url 'oauth2_start' %}">
+            Sign in With Google
+        </a>
+    </form>
+</body>
+
+</html>

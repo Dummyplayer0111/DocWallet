@@ -1,0 +1,44 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Choose Username</title>
+  <link rel="stylesheet" href="{% static 'css/choose_name.css' %}">
+</head>
+
+<body>
+  <div class="container">
+
+    <h2>Choose a Username</h2>
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="field">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        {% for error in form.username.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="field">
+        {{ form.timezone.label_tag }}
+        {{ form.timezone }}
+        {% for error in form.timezone.errors %}
+          <p class="error">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <button type="submit"
+              onclick="return confirm('We require access to the data in your Drive')">
+        Continue
+      </button>
+    </form>
+  </div>
+</body>
+
+</html>

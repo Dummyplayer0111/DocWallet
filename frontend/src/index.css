@@ -1,0 +1,294 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #eef2fb;
+  --glass:     rgba(255,255,255,0.80);
+  --glass-b:   rgba(180,200,255,0.35);
+  --glass-h:   rgba(255,255,255,0.95);
+  --accent:    #5b8def;
+  --accent2:   #9b74f7;
+  --text:      #1a237e;
+  --muted:     #5c6bc0;
+  --danger:    #ef5350;
+  --success:   #4caf50;
+  --radius:    18px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Background ambient orbs (always present) ── */
+body::before {
+  content: '';
+  position: fixed;
+  width: 700px; height: 700px;
+  top: -250px; left: -150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(91,141,239,0.14) 0%, transparent 65%);
+  animation: orbA 18s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  width: 550px; height: 550px;
+  bottom: -180px; right: -120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(155,116,247,0.14) 0%, transparent 65%);
+  animation: orbA 22s ease-in-out 4s infinite reverse;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Keyframes ── */
+@keyframes orbA {
+  0%,100% { transform: translate(0,0) scale(1); }
+  40%      { transform: translate(40px,-30px) scale(1.08); }
+  70%      { transform: translate(-25px,35px) scale(0.95); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes rowIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Animation helpers ── */
+.fade-up { animation: fadeUp 0.55s cubic-bezier(0.22,1,0.36,1) both; }
+.fade-in { animation: fadeIn 0.4s ease both; }
+.pop-in  { animation: popIn  0.4s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Glass card ── */
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-b);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(91,141,239,0.10);
+}
+
+/* ── Inputs & selects ── */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="password"],
+select,
+textarea {
+  font-family: inherit;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(91,141,239,0.25);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 0.7rem 0.95rem;
+  font-size: 0.95rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(91,141,239,0.18);
+}
+input::placeholder { color: rgba(92,107,192,0.5); }
+option { background: #fff; color: var(--text); }
+
+/* ── File input ── */
+input[type="file"] {
+  font-family: inherit;
+  background: rgba(255,255,255,0.85);
+  border: 1.5px dashed rgba(91,141,239,0.4);
+  border-radius: 10px;
+  color: var(--muted);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+  outline: none;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+input[type="file"]:hover { border-color: var(--accent); }
+input[type="file"]::file-selector-button {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-right: 0.75rem;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+input[type="file"]::file-selector-button:hover { opacity: 0.85; }
+
+/* ── Checkbox ── */
+input[type="checkbox"] {
+  width: 17px; height: 17px; min-width: 17px;
+  padding: 0; border-radius: 5px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(91,141,239,0.3);
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.3rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  font-family: inherit;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s, background 0.2s;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed !important; transform: none !important; box-shadow: none !important; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(91,141,239,0.35);
+}
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(91,141,239,0.55); }
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+.btn-ghost {
+  background: rgba(255,255,255,0.85);
+  color: var(--text);
+  border: 1px solid rgba(91,141,239,0.22);
+}
+.btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,1); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(91,141,239,0.15); }
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef5350, #c62828);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(239,83,80,0.25);
+}
+.btn-danger:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(239,83,80,0.45); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(91,141,239,0.5);
+}
+.btn-outline:hover:not(:disabled) { background: rgba(91,141,239,0.08); border-color: var(--accent); transform: translateY(-1px); }
+
+.btn-sm { padding: 0.4rem 0.85rem; font-size: 0.82rem; border-radius: 8px; }
+
+/* ── Navigation link ── */
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.88rem;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.nav-link:hover { color: var(--text); }
+
+/* ── Gradient heading text ── */
+.grad-text {
+  background: linear-gradient(135deg, #5b8def, #9b74f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Table ── */
+.dw-table { width: 100%; border-collapse: collapse; }
+.dw-table thead tr {
+  background: linear-gradient(135deg, rgba(26,35,126,0.85), rgba(49,27,146,0.85));
+}
+.dw-table th {
+  padding: 0.9rem 1.1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: rgba(255,255,255,0.85);
+}
+.dw-table td {
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid rgba(91,141,239,0.1);
+  font-size: 0.92rem;
+}
+.dw-table tbody tr {
+  transition: background 0.15s;
+  animation: rowIn 0.35s ease both;
+}
+.dw-table tbody tr:hover { background: rgba(91,141,239,0.07); }
+.dw-table .total-row td {
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: none;
+  background: rgba(91,141,239,0.08);
+}
+
+/* ── Form error ── */
+.form-error {
+  color: #c62828;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.9rem;
+  background: rgba(239,83,80,0.08);
+  border: 1px solid rgba(239,83,80,0.25);
+  border-radius: 8px;
+}
+
+/* ── Spinner ── */
+.spinner {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 3px solid rgba(91,141,239,0.2);
+  border-top-color: var(--accent);
+  animation: spin 0.75s linear infinite;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(91,141,239,0.28); border-radius: 3px; }

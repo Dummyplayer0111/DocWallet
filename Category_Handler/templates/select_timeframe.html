@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Timeframe</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 30px;
+        }
+
+        .container {
+            background-color: white;
+            max-width: 450px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Select Timeframe and Categories</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            <div class="field">
+                {{ form.start_date.label_tag }}
+                {{ form.start_date }}
+                <div class="error">{{ form.start_date.errors }}</div>
+            </div>
+
+            <div class="field">
+                {{ form.end_date.label_tag }}
+                {{ form.end_date }}
+                <div class="error">{{ form.end_date.errors }}</div>
+            </div>
+
+            <div class="field">
+                {{ form.categories.label_tag }}
+                {{ form.categories }}
+                <div class="error">{{ form.categories.errors }}</div>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+</body>
+</html>

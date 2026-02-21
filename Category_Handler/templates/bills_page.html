@@ -1,0 +1,93 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Details</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: white;
+            background-color: #777;
+            padding: 8px 12px;
+        }
+
+        .back:hover {
+            opacity: 0.9;
+        }
+
+        .item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .actions {
+            margin-top: 20px;
+        }
+
+        .actions a {
+            display: inline-block;
+            margin-right: 10px;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50;
+        }
+
+        .actions a.export {
+            background-color: #2196F3;
+        }
+
+        .actions a:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Back to Home -->
+        <a href="{% url 'home' %}" class="back">← Back to Home</a>
+
+        {% for name in list %}
+            <div class="item">
+                {% detail_link name %}
+            </div>
+        {% empty %}
+            <p>No entries found.</p>
+        {% endfor %}
+
+        <div class="actions">
+            <a href="{% url 'new_bill' UUID=uuid %}">Add New Bill</a>
+            <a href="{% url 'cat_timeframe' UUID=uuid %}" class="export">Export</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

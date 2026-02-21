@@ -1,0 +1,51 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #8c7a66;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+  margin: 0;
+  padding: 0 10vh;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+button {
+  background-color: white;
+  border-radius: 15px;
+  padding: 5px;
+  font-weight: 500;
+  font-size: 12px;
+  margin: 2.5px 0;
+}
+
+.container {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-1 {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  margin-top: 10px;
+}
+
+.g_id_signin {
+  margin-top: 20px;
+}
+
+@media(max-width:430px) {
+  body {
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,18 @@
+{% load login_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    {% for category in UUID_DICT %}
+            {%  dict_get category as uuid %}
+                <a href="{% url 'view_category' UUID=uuid %}">{{ category }}</a>
+    {% endfor %}
+    <a href="{% url 'edit' %}">Edit Categories</a>
+    <a href="{% url 'choose_time_frame' %}">Export</a>
+</body>
+</html>

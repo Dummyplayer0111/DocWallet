@@ -1,0 +1,70 @@
+{% load login_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .contain-ur-ass {
+            background-color: white;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+            border: 2px solid #ccc;
+        }
+
+        a {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #e6e6e6;
+            color: black;
+            text-decoration: none;
+            border: 1px solid #999;
+        }
+
+        a:hover {
+            background-color: #d9d9d9;
+        }
+
+        .links {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Categories</h1>
+
+    <div class="contain-ur-ass">
+        {% for category in UUID_DICT %}
+            {% dict_get category as uuid %}
+            <a href="{% url 'view_category' UUID=uuid %}">
+                {{ category }}
+            </a>
+        {% endfor %}
+
+        <div class="links">
+            <a href="{% url 'edit' %}">Edit Categories</a>
+            <a href="{% url 'choose_time_frame' %}">Export</a>
+        </div>
+    </div>
+
+</body>
+</html>

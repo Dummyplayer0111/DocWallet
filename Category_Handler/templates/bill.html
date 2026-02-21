@@ -1,0 +1,92 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Details</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            max-width: 700px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .info {
+            margin-bottom: 15px;
+        }
+
+        .frame {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        iframe {
+            border: 1px solid #ccc;
+        }
+
+        .actions {
+            margin-top: 15px;
+        }
+
+        .actions a {
+            display: inline-block;
+            margin-right: 10px;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50;
+        }
+
+        .actions a.edit {
+            background-color: #2196F3;
+        }
+
+        .actions a:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>Bill Information</h2>
+
+        <div class="info">
+            <strong>Value:</strong> {{ value }}
+        </div>
+
+        <div class="frame">
+            <iframe
+                src="https://drive.google.com/file/d/{{ id }}/preview"
+                width="600"
+                height="400"
+                allow="autoplay">
+            </iframe>
+        </div>
+
+        <div class="actions">
+            {% edit_link name %}
+        </div>
+
+    </div>
+
+</body>
+
+</html>

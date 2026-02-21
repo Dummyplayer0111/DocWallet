@@ -1,0 +1,79 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bills</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .actions a {
+            text-decoration: none;
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .actions a:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>Bills</h2>
+
+        {% for name in list %}
+            <div class="item">
+                {% detail_link name %}
+            </div>
+        {% empty %}
+            <p>No bills found.</p>
+        {% endfor %}
+
+        <div class="actions">
+            <a href="{% url 'download' rows=length %}">
+                Download PDF
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>
