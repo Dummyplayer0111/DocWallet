@@ -1,4 +1,6 @@
 import os,pytz,uuid
+BACKEND_URL = os.environ.get('BACKEND_URL', 'http://localhost:8000')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.http import HttpResponse
@@ -26,7 +28,7 @@ def auth_receiver(request):
     if not state:
         return HttpResponse("Missing OAuth state", status=400)
     flow = utils.create_flow_object(state)
-    flow.redirect_uri = "http://localhost:8000/auth-receiver/"
+    flow.redirect_uri = f"{BACKEND_URL}/auth-receiver/"
     authorization_response = request.build_absolute_uri()
     try:
         flow.fetch_token(authorization_response=authorization_response)
@@ -47,9 +49,9 @@ def auth_receiver(request):
         existing = GoogleCredentials.objects.filter(user=user).first()
         refresh_token = credentials.refresh_token or (existing.refresh_token if existing else None)
         utils.update_db_on_credentials(request,credentials,refresh_token)
-        return redirect('http://localhost:3000/home')
+        return redirect(f'{FRONTEND_URL}/home')
     else:
-        return redirect('http://localhost:3000/choose-name')
+        return redirect(f'{FRONTEND_URL}/choose-name')
 
 def sign_in(request):
     return render(request, 'sign_in.html')
@@ -57,7 +59,7 @@ def sign_in(request):
 def oauth2_start(request):
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
     flow=utils.create_flow_object()
-    flow.redirect_uri = "http://localhost:8000/auth-receiver/"
+    flow.redirect_uri = f"{BACKEND_URL}/auth-receiver/"
 
     authorization_url, state = flow.authorization_url(
         access_type='offline',

@@ -94,7 +94,7 @@ def create_flow_object(state_f=None):
                 "client_secret": os.environ['GOOGLE_OAUTH_CLIENT_SECRET'],
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": ["http://localhost:8000/auth-receiver/"],
+                "redirect_uris": [f"{os.environ.get('BACKEND_URL', 'http://localhost:8000')}/auth-receiver/"],
             }
         },
         scopes=[
@@ -102,9 +102,8 @@ def create_flow_object(state_f=None):
             "https://www.googleapis.com/auth/userinfo.email",
             "https://www.googleapis.com/auth/drive.file",
             "https://www.googleapis.com/auth/userinfo.profile",
-            "https://www.googleapis.com/auth/drive",
         ],
-        state=state_f 
+        state=state_f
         )
         return flow_f
     
@@ -118,7 +117,7 @@ def create_flow_object(state_f=None):
                 "client_secret": os.environ['GOOGLE_OAUTH_CLIENT_SECRET'],
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": ["http://localhost:8000/auth-receiver/"],
+                "redirect_uris": [f"{os.environ.get('BACKEND_URL', 'http://localhost:8000')}/auth-receiver/"],
             }
         },
         scopes=[
@@ -126,11 +125,10 @@ def create_flow_object(state_f=None):
             "https://www.googleapis.com/auth/userinfo.email",
             "https://www.googleapis.com/auth/drive.file",
             "https://www.googleapis.com/auth/userinfo.profile",
-            "https://www.googleapis.com/auth/drive",
         ],
         )
         return flow_f
-    
+
 def session_update(request,credentials):
         
     request.session['credentials'] = {

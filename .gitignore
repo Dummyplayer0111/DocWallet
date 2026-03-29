@@ -1,32 +1,26 @@
+# Environment
+DocWallet/.env
+
 # Python
+__pycache__/
 *.pyc
-*~
-__pycache__
+*.pyo
+*.pyd
+*.egg-info/
 
-# Env
-.env
-Environment/
-venv/
-
-# Database
+# Django
 db.sqlite3
+static_files/
 
-# Static folder at project root
-/static/
+# React
+frontend/node_modules/
+frontend/build/
 
-# macOS
-._*
+# Virtual envs
+venv/
+env/
+.venv/
+
+# OS
 .DS_Store
-.fseventsd
-.Spotlight-V100
-
-# Windows
-Thumbs.db*
-ehthumbs*.db
-[Dd]esktop.ini
-$RECYCLE.BIN/
-
-# Visual Studio
-.vscode/
-.history/
-*.code-workspace
+Thumbs.db
