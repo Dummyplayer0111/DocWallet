@@ -63,7 +63,6 @@ def oauth2_start(request):
 
     authorization_url, state = flow.authorization_url(
         access_type='offline',
-        include_granted_scopes='true',
         prompt='consent select_account'
     )
     request.session['state'] = state  
