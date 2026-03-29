@@ -1,40 +1,121 @@
-1.Create a new folder and inside it follow the other steps.
+# DocWallet
 
-2.Make sure python is accessible there by opening a commaand prompt there and using the command "python --version" or "python3 --version".
+A personal bill-tracking web app that stores receipt images on Google Drive and lets you export filtered reports as PDF.
 
-3.If it is accessible create a new virtual environment using the command "python -m venv venv".
+## Tech Stack
 
-4.Inside the same folder clone the repository and open command prompt in the repository folder.Type the command "pip install -r requirements.txt" to install all required dependencies
+| Layer | Technology |
+|-------|-----------|
+| Backend | Django 5, Django REST Framework |
+| Frontend | React 19, React Router 7 |
+| Storage | Google Drive (via Google API) |
+| Auth | Google OAuth 2.0 |
+| PDF export | ReportLab |
+| Database | SQLite (session/user data) |
 
-5.The folder should look like this:
-	->DocWallet
-	       ->venv
-	       ->Docwallet
-		      ->DocWallet
-		      ->Category_Handler
-		      ->Login_Handler
-		      ->.gitignore
-		      ->db.sqlite3
-		      ->readme.txt
-		      ->requirements.txt
-	      	      ->requirements.txt
-		      ->manage.py
-		      (Open command prompt here)
+## Features
 
-6.Go to google cloud console create a new project and set up an OAuth external client with the following scopes and add a few audiences:
-	auth/drive.appdata
-	auth/userinfo.email
-Make sure to include authorised redirect URLS and authorised javascript origins as those of localhost. 
+- Sign in with Google
+- Organise bills into categories
+- Upload bill images directly to your Google Drive
+- View, edit, and delete bills
+- Export bills by date range (all categories or a single one)
+- Download a formatted PDF report
 
-7.In DocWallet/DocWallet/DocWallet create a new '.env' file and put in the following:
+## Project Structure
 
-	GOOGLE_OAUTH_CLIENT_ID='Your OAuth Client's ID here'
-	GOOGLE_OAUTH_CLIENT_SECRET='Your OAuth Client's secret here'
-	SECRET_KEY='Django Secret Key here'
+```
+docwallet/
+├── DocWallet/          # Django project settings & root URLs
+├── Category_Handler/   # Bills & categories API (views, models, Drive utils)
+├── Login_Handler/      # Google OAuth login/logout flow
+├── frontend/           # React app (Create React App)
+│   └── src/pages/      # Page components (SignIn, Home, BillsPage, …)
+├── manage.py
+├── requirements.txt
+└── db.sqlite3
+```
 
-8.Now navigate to DocWallet/Docwallet on command prompt and run the following command 'python manage.py runserver'
+## Setup
 
-9.The server will run and you can use the app you need internet to use it.Press 'Ctrl+C' to stop the server.
+### Prerequisites
 
-10.To use the web-app go to localhost:8000 or 127.0.0.1:8000 on a browser.
+- Python 3.x
+- Node.js & npm
+- A Google Cloud project with OAuth 2.0 credentials
 
+### 1. Create a virtual environment
+
+```bash
+mkdir DocWallet && cd DocWallet
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+```
+
+### 2. Clone and install Python dependencies
+
+```bash
+git clone <repo-url> docwallet
+cd docwallet
+pip install -r requirements.txt
+```
+
+### 3. Configure Google OAuth
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/) and create a project.
+2. Set up an **OAuth 2.0 Client ID** (External, Web application) with the following scopes:
+   - `auth/drive.appdata`
+   - `auth/userinfo.email`
+3. Add `http://localhost:8000` to **Authorised JavaScript origins**.
+4. Add `http://localhost:8000/...` (your callback URL) to **Authorised redirect URIs**.
+
+### 4. Create the `.env` file
+
+Inside `DocWallet/` (the Django project package folder), create a file named `.env`:
+
+```
+GOOGLE_OAUTH_CLIENT_ID='your-client-id'
+GOOGLE_OAUTH_CLIENT_SECRET='your-client-secret'
+SECRET_KEY='your-django-secret-key'
+```
+
+### 5. Run database migrations
+
+```bash
+python manage.py migrate
+```
+
+### 6. Start the Django backend
+
+```bash
+python manage.py runserver
+```
+
+The API is available at `http://localhost:8000`.
+
+### 7. Start the React frontend (development)
+
+In a separate terminal:
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+The frontend runs at `http://localhost:3000` and proxies API requests to the Django backend.
+
+### 8. Open the app
+
+Navigate to `http://localhost:3000` (dev) or `http://localhost:8000` (if serving the built frontend via Django).
+
+> **Note:** An internet connection is required for Google OAuth and Drive operations.
+
+## Building for Production
+
+```bash
+cd frontend
+npm run build
+```
+
+Then serve the built static files through Django (configure `STATICFILES_DIRS` / `WhiteNoise` as needed).
