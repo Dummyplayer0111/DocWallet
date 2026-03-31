@@ -26,7 +26,7 @@ export default function SignIn() {
         </h1>
         <p style={s.subtitle}>Your personal bill manager</p>
 
-        <a href="https://dummyplayer0111.pythonanywhere.com//oauth2-start/" style={s.btn}>
+        <a href="https://dummyplayer0111.pythonanywhere.com/oauth2-start/" style={s.btn}>
           <GoogleIcon />
           Sign in with Google
         </a>
